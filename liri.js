@@ -1,24 +1,34 @@
 // environment variables
 require("dotenv").config();
 var keys = require("./keys.js");
+var Spotify = require("node-spotify-api");
 
-// var to packages
-// var spotify = new Spotify(keys.spotify);
+var spotify = new Spotify(keys.spotify);
 var axios = require("axios");
-
-var moment = require('moment');
+var moment = require("moment");
 
 
 var command = process.argv[2];
+var userInputText = process.argv.slice(3).join(" ");
 
-// ***********************************************************************************
-// COMMANDS 
-// Make it so liri.js can take in one of the following commands:
-// * `concert-this`
-// * `spotify-this-song`
-// * `movie-this`
-// * `do-what-it-says`
-// ***********************************************************************************
+
+switch (command){
+    case "concert-this":
+      concerts();
+      break;
+    
+    case "spotify-this-song":
+      spotifySong();
+      break;
+    
+    case "movie-this":
+      movie();
+      break;
+    
+    case "lotto":
+      lotto();
+      break;
+    };
 
 // BANDS
 // if request is concert-this get artist from bands in town -axios
@@ -28,16 +38,17 @@ var command = process.argv[2];
 //      * Venue location
 //      * Date of the Event (use moment to format this as "MM/DD/YYYY")
 
-if (command === "concert-this") {
-    var artist = process.argv.slice(3).join(" ");
-    var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
-    if (artist === "") {
-        console.log("Sorry, no show times for that artist at this time!");
+function concerts (){
+// if (command === "concert-this") {
+    var queryUrl = "https://rest.bandsintown.com/artists/" + userInputText + "/events?app_id=codingbootcamp";
+    if (userInputText === "") {
+        console.log("Sorry, no show times for this artist at this time!");
         console.log("Try again in a month!");
     } else {
         axios.get(queryUrl).then(
             function (response) {
                 for (i = 0; i < response.data.length; i++) {
+                    console.log("\r\n------YOUR CONCERT SEARCH for " + userInputText + "---------");
                     console.log("Venue: " + response.data[i].venue.name);
                     var location = response.data[i].venue.city + ", " + response.data[i].venue.region + " " + response.data[i].venue.country
                     console.log("Location: " + location);
@@ -65,6 +76,38 @@ if (command === "concert-this") {
 //    * The Spotify API requires you sign up as a developer to generate the necessary credentials. You can follow these steps in order to generate a **client id** and **client secret**:
 
 
+function spotifySong (){
+// if (command === "spotify-this-song") {
+    // var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+    // if (song === "") {
+    //     song = "The Sign"; //by Ace of Base
+    //     // console.log("If you haven't watched 'Mr. Nobody', then you should: <http://www.imdb.com/title/tt0485947/>");
+    //     // console.log("It's on Netflix!");
+    // } else {
+    spotify
+        .search({
+            type: "track",
+            query: userInputText
+        })
+        .then(function (response) {
+            for (i = 0; i <= 7; i++) {
+                console.log("\r\n------YOUR SONG SEARCH for " + userInputText + "---------");
+                console.log("Artist: " + response.tracks.items[i].album.artists[0].name);
+                console.log("Album: " + response.tracks.items[i].album.name);
+                console.log("Song: " + response.tracks.items[i].name);
+                console.log("Preview Song: " + response.tracks.items[i].external_urls.spotify);
+            }
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+
+    // };
+};
+
+
+
+
 
 // ***********************************************************************************
 // MOVIES
@@ -86,17 +129,17 @@ if (command === "concert-this") {
 //      * It's on Netflix!
 //    * You'll use the `axios` package to retrieve data from the OMDB API. Like all of the in-class activities, the OMDB API requires an API key. You may use `trilogy`.
 
-
-if (command === "movie-this") {
-    var movieName = process.argv.slice(3).join(" ");
-    var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
-    if (movieName === "") {
-        movieName = "Mr. Nobody";
+function movie (){
+// if (command === "movie-this") {
+    var queryUrl = "http://www.omdbapi.com/?t=" + userInputText + "&y=&plot=short&apikey=trilogy";
+    if (userInputText === "") {
+        userInputText = "Mr. Nobody";
         console.log("If you haven't watched 'Mr. Nobody', then you should: <http://www.imdb.com/title/tt0485947/>");
         console.log("It's on Netflix!");
     } else {
         axios.get(queryUrl).then(
             function (response) {
+                console.log("\r\n------YOUR MOVIE SEARCH for " + userInputText + "---------");
                 console.log("Movie Title: " + response.data.Title);
                 console.log("Release Year: " + response.data.Year);
                 console.log("IMDB Rating: " + response.data.Ratings[0].Value);
