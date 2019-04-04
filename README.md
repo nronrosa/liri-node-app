@@ -12,6 +12,7 @@ From terminal you will use a command and user input to retrieve data from APIs. 
 Type in the command line 'node liri.js' and one of the following commands and the input text:
 ## Movies command: movie-this
 Will retrieve the following:
+
      ```
        * Title of the movie.
        * Year the movie came out.
@@ -22,6 +23,7 @@ Will retrieve the following:
        * Plot of the movie.
        * Actors in the movie.
        ```
+
 * Images:
 ![movie-this with Movie and Movie-this with movie not found](/assets/images/movieThis_movie_and_notFound.png) 
 
@@ -29,12 +31,14 @@ Will retrieve the following:
      
 ## Songs command: spotify-this-song
 Will retrieve the following:
+
     ```
      * Artist(s)
      * The song's name
      * A preview link of the song from Spotify
      * The album that the song is from
     ```
+
 * Images:
 ![spotify-this-song with song](/assets/images/spotifyThisSong_song.png) 
 
@@ -44,18 +48,22 @@ Will retrieve the following:
     
 ## Concerts command: concert-this
 Will retrieve the following:
+
     ```
     * Name of the venue
     * Venue location
     * Date of the Event (using moment to format)
     ```
+
 * Images:
 ![concert-this with band, blank, and not found](/assets/images/concert-this.png) 
 
 ## Do What It Says (FS file) command: do-what-it says 
+
     ```
     * Will retrieve the the text inside of a file named random.txt and then use it to call one of LIRI's commands.
     ```
+
 * Images:
 ![do-what-it-says: spotify-this-song](/assets/images/do-what-it-says_spotify.png) 
 
