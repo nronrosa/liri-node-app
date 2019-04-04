@@ -1,3 +1,4 @@
+// environment vars
 require("dotenv").config();
 var keys = require("./keys.js");
 var Spotify = require("node-spotify-api");
@@ -38,16 +39,19 @@ function checkCommand(action, input) {
 
 checkCommand(command, userInputText);
 
+// LIRI functions for bandsintown, OMDB, Spotify APIs and FS
 function concerts(band) {
-    var queryUrl = "https://rest.bandsintown.com/artists/" + band + "/events?app_id=codingbootcamp";
     if (band === "") {
         console.log("You must enter a band/artist");
     } else {
-        axios.get(queryUrl).then(
+        axios.get("https://rest.bandsintown.com/artists/" + band + "/events?app_id=codingbootcamp").then(
                 function (response) {
-                    if (response.data.length === 0) {
-                        console.log("Sorry, no information. Try another.");
-                    } else {
+                    try {
+                        if (response.data.length === 0) {
+                            console.log("No Data");
+                            return;
+                        }
+
                         for (var i = 0; i < response.data.length; i++) {
                             console.log("\r\n------CONCERT SEARCH for " + band + "---------");
                             console.log("Venue: " + response.data[i].venue.name);
@@ -56,11 +60,19 @@ function concerts(band) {
                             var eventDate = moment(response.data[i].datetime).format("MM-DD-YYYY");
                             console.log("Date: " + eventDate);
                         }
+                    } catch (err) {
+                        console.log("in catch err");
+                        console.log(err);
                     }
                 }
             )
             .catch(function (error) {
-                console.log(error);
+                if (error.response) {
+                    console.log("No Data");
+                  } 
+                else {
+                    console.log(error);
+                }
             });
     };
 };
@@ -76,11 +88,20 @@ function spotifySong(song) {
         })
         .then(function (response) {
             for (var i = 0; i < 7; i++) {
-                console.log("\r\n------SONG SEARCH for '" + song + "'---------");
-                console.log("Artist: " + response.tracks.items[i].album.artists[0].name);
-                console.log("Album: " + response.tracks.items[i].album.name);
-                console.log("Song: " + response.tracks.items[i].name);
-                console.log("Preview Song: " + response.tracks.items[i].external_urls.spotify);
+                try {
+                    if (response.tracks.total === 0 || !response.hasOwnProperty("tracks")) {
+                        console.log("No Data");
+                        return;
+                    }
+                    console.log("\r\n------SONG SEARCH for '" + song + "'---------");
+                    console.log("Artist: " + response.tracks.items[i].album.artists[0].name);
+                    console.log("Album: " + response.tracks.items[i].album.name);
+                    console.log("Song: " + response.tracks.items[i].name);
+                    console.log("Preview Song: " + response.tracks.items[i].external_urls.spotify);
+                } catch (err) {
+                    console.log("in catch err");
+                    console.log(err);
+                }
             }
         })
         .catch(function (err) {
@@ -97,15 +118,24 @@ function movieThis(movie) {
 
     axios.get("http://www.omdbapi.com/?t=" + movie + "&apikey=trilogy").then(
             function (response) {
-                console.log("\r\n------MOVIE SEARCH for " + movie + "---------");
-                console.log("Movie Title: " + response.data.Title);
-                console.log("Release Year: " + response.data.Year);
-                console.log("IMDB Rating: " + response.data.Ratings[0].Value);
-                console.log("Rotten Tomatoes Rating: " + response.data.Ratings[1].Value);
-                console.log("Country where Produced: " + response.data.Country);
-                console.log("Language of movie: " + response.data.Language);
-                console.log("Plot: " + response.data.Plot);
-                console.log("Actors: " + response.data.Actors);
+                try {
+                    if (response.data.Response === "False") {
+                        console.log("No Data");
+                        return;
+                    }
+                    console.log("\r\n------MOVIE SEARCH for " + movie + "---------");
+                    console.log("Movie Title: " + response.data.Title);
+                    console.log("Release Year: " + response.data.Year);
+                    console.log("IMDB Rating: " + response.data.Ratings[0].Value);
+                    console.log("Rotten Tomatoes Rating: " + response.data.Ratings[1].Value);
+                    console.log("Country where Produced: " + response.data.Country);
+                    console.log("Language of movie: " + response.data.Language);
+                    console.log("Plot: " + response.data.Plot);
+                    console.log("Actors: " + response.data.Actors);
+                } catch (err) {
+                    console.log("in catch err");
+                    console.log(err);
+                }
             }
         )
         .catch(function (error) {
