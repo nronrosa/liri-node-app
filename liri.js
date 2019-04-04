@@ -1,4 +1,4 @@
-// environment vars
+// environment vars and packages
 require("dotenv").config();
 var keys = require("./keys.js");
 var Spotify = require("node-spotify-api");
@@ -46,6 +46,7 @@ function concerts(band) {
     } else {
         axios.get("https://rest.bandsintown.com/artists/" + band + "/events?app_id=codingbootcamp").then(
                 function (response) {
+                    console.log(band);
                     try {
                         if (response.data.length === 0) {
                             console.log("No Data");
